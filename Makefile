@@ -76,7 +76,15 @@ TRAIN_OBJS := \
 	$(TRAIN_BUILD)/tui.o \
 	$(TRAIN_BUILD)/main.o
 
-.PHONY: all inference test-math check os os-check os-iso os-run train train-check check-all clean
+# --- Native Apple Silicon / AArch64 inference port ---
+ARM64_TARGET := $(BUILD)/asm-llm-arm64
+CXX ?= clang++
+CXXFLAGS ?= -O3 -std=c++20 -Wall -Wextra
+ARM64_MODEL ?= models/qwen3-0.6b-q8_0.asmbin
+ARM64_CTX ?= 2048
+ARM64_TOKENS ?= 128
+
+.PHONY: all inference test-math check os os-check os-iso os-run train train-check check-all arm64 arm64-run clean
 
 all: inference $(TEST) os train
 
@@ -173,6 +181,14 @@ train-check: $(TRAIN_TARGET)
 	readelf -d $(TRAIN_TARGET) || true
 	readelf -S $(TRAIN_TARGET)
 	wc -l $(P3_DIR)/*.asm $(P3_DIR)/*.inc
+
+$(ARM64_TARGET): arm64/main.cpp | $(BUILD)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+arm64: $(ARM64_TARGET)
+
+arm64-run: $(ARM64_TARGET)
+	$(ARM64_TARGET) "$(ARM64_MODEL)" $(ARM64_CTX) $(ARM64_TOKENS)
 
 check-all: check os-check train-check
 

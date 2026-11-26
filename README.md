@@ -5,6 +5,8 @@ Zero C, zero C++, zero Rust, zero libc, zero libm, zero runtime dependencies.
 
 Assembled directly with `nasm` and linked with `ld`. Every math kernel (`expf`, `sincosf`, `RMSNorm`, `RoPE`, `SiLU`, `Softmax`), AVX2+FMA+F16C GEMM/GEMV engine, BPE tokenizer, `clone()`/`futex()` thread pool, bare-metal SMP kernel, analytical backward pass, AdamW optimizer, and live Unicode Braille TUI is hand-written x86-64 assembly (`17,252` lines total across all three projects).
 
+The original x86-64 projects remain available. [`arm64/`](arm64/README.md) contains a native Apple Silicon port of the Qwen3-0.6B inference path using the same `.asmbin` weights and tokenizer with ARM NEON kernels.
+
 ## The Trilogy
 
 | Project | Binary | Size | Deps | Key Numbers |
